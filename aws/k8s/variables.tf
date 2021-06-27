@@ -3,13 +3,13 @@ variable "cluster_name" {
 }
 
 variable "app_name" {
-	default = "tr"
+  default = "tr"
 }
 
 variable "tr_domain" {
-	default = "tr.dev"
+  default = "tr.dev"
 }
 
 variable "efs_id" {
-	default = ""
+  default = ""
 }
