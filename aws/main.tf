@@ -22,6 +22,10 @@ data "aws_availability_zones" "available" {
 
 locals {
   cluster_name = "tr-eks-${random_string.suffix.result}"
+  tags = {
+    Owner       = var.app_name
+    Environment = var.environment
+  }
 }
 
 resource "random_string" "suffix" {
@@ -88,15 +92,12 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
+  version         = "17.1.0"
   cluster_name    = local.cluster_name
   cluster_version = "1.20"
   subnets         = module.vpc.private_subnets
 
-  tags = {
-    Environment = "tr"
-    GithubRepo  = "terraform-aws-eks"
-    GithubOrg   = "terraform-aws-modules"
-  }
+  tags = local.tags
 
   vpc_id = module.vpc.vpc_id
 
@@ -106,9 +107,21 @@ module "eks" {
       instance_type                 = var.node_instance_type
       additional_userdata           = ""
       asg_desired_capacity          = var.node_asg_desired_capacity
-      min_size                      = var.node_asg_min_size
-      max_size                      = var.node_asg_max_size
+      asg_min_size                  = var.node_asg_min_size
+      asg_max_size                  = var.node_asg_max_size
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+      tags = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "true"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${local.cluster_name}"
+          "propagate_at_launch" = "true"
+          "value"               = "owned"
+        }
+      ]
     },
   ]
 
@@ -118,10 +131,66 @@ module "eks" {
   map_accounts                         = var.map_accounts
 }
 
+resource "aws_iam_role_policy_attachment" "workers_autoscaling" {
+  policy_arn = aws_iam_policy.worker_autoscaling.arn
+  role       = module.eks.worker_iam_role_name
+}
+
+resource "aws_iam_policy" "worker_autoscaling" {
+  name_prefix = "eks-worker-autoscaling-${module.eks.cluster_id}"
+  description = "EKS worker node autoscaling policy for cluster ${module.eks.cluster_id}"
+  policy      = data.aws_iam_policy_document.worker_autoscaling.json
+  path        = var.iam_path
+  tags        = local.tags
+}
+
+data "aws_iam_policy_document" "worker_autoscaling" {
+  statement {
+    sid    = "eksWorkerAutoscalingAll"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:DescribeAutoScalingInstances",
+      "autoscaling:DescribeLaunchConfigurations",
+      "autoscaling:DescribeTags",
+      "ec2:DescribeLaunchTemplateVersions",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "eksWorkerAutoscalingOwn"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:SetDesiredCapacity",
+      "autoscaling:TerminateInstanceInAutoScalingGroup",
+      "autoscaling:UpdateAutoScalingGroup",
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_id}"
+      values   = ["owned"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled"
+      values   = ["true"]
+    }
+  }
+}
+
 resource "local_file" "k8s_terraform_tfvars" {
   sensitive_content = templatefile("${path.module}/k8s/terraform.tfvars.tpl", {
     cluster_name = local.cluster_name,
     efs_id       = module.efs-0.id,
+    region       = var.region,
     })
   filename          = "./k8s/terraform.tfvars"
   file_permission   = "0755"

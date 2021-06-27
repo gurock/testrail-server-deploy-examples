@@ -15,11 +15,11 @@ variable "node_instance_type" {
 }
 
 variable "node_asg_desired_capacity" {
-  default = "2"
+  default = "1"
 }
 
 variable "node_asg_min_size" {
-  default = "2"
+  default = "1"
 }
 
 variable "node_asg_max_size" {
@@ -83,4 +83,10 @@ variable "map_users" {
       groups   = ["system:masters"]
     },
   ]
+}
+
+variable "iam_path" {
+  description = "If provided, all IAM roles will be created on this path."
+  type        = string
+  default     = "/"
 }

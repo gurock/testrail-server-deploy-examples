@@ -52,6 +52,27 @@ resource "helm_release" "nginx_ingress" {
   }
 }
 
+resource "helm_release" "cluster-autoscaler" {
+  namespace  = "kube-system"
+  wait       = true
+  timeout    = 600
+
+  name       = "cluster-autoscaler"
+
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+  version    = "9.9.2"
+
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = var.cluster_name
+  }
+  set {
+    name  = "awsRegion"
+    value = var.region
+  }
+}
+
 resource "helm_release" "aws-efs-csi-driver" {
   namespace  = "kube-system"
   wait       = false # doesn't work with true
