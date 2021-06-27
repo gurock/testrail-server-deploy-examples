@@ -26,9 +26,9 @@ app_name      = "tr"
 ## AWS EKS Cluster size
 #
 node_instance_type        = "c5.large"
-node_asg_desired_capacity = 3
-node_asg_min_size         = 3
-node_asg_max_size         = 6
+node_asg_desired_capacity = 2
+node_asg_min_size         = 2
+node_asg_max_size         = 10
 
 #
 ## DB settings
