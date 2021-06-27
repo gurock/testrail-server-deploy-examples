@@ -156,4 +156,25 @@ resource "helm_release" "testrail" {
 		name  = "ingress.hosts.0.paths.0.path"
 		value = "/"
 	}
+resource "kubernetes_namespace" "cert-manager" {
+  metadata {
+    name = "cert-manager"
+  }
+}
+
+resource "helm_release" "cert-manager" {
+  namespace  = "cert-manager"
+  wait       = true
+  timeout    = 600
+
+  name       = "cert-manager"
+
+  repository = "https://charts.jetstack.io"
+  chart      = "cert-manager"
+  version    = "v1.4.0"
+
+  set {
+    name  = "installCRDs"
+    value = true
+  }
 }
