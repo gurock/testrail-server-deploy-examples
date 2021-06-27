@@ -140,22 +140,24 @@ resource "helm_release" "testrail" {
   chart      = "./../../charts/testrail"
   version    = "0.4.0"
 
-	set {
-		name  = "storage.efs_enabled"
-		value = true
-	}
-	set {
-		name  = "pvc.volumeHandle"
-		value = var.efs_id
-	}
-	set {
-		name  = "ingress.hosts.0.host"
-		value = var.tr_domain
-	}
-	set {
-		name  = "ingress.hosts.0.paths.0.path"
-		value = "/"
-	}
+  set {
+    name  = "storage.efs_enabled"
+    value = true
+  }
+  set {
+    name  = "pvc.volumeHandle"
+    value = var.efs_id
+  }
+  set {
+    name  = "ingress.hosts.0.host"
+    value = var.tr_domain
+  }
+  set {
+    name  = "ingress.hosts.0.paths.0.path"
+    value = "/"
+  }
+}
+
 resource "kubernetes_namespace" "cert-manager" {
   metadata {
     name = "cert-manager"
