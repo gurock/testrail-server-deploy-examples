@@ -42,3 +42,6 @@ terraform.rc
 # kubeconfigs
 *kubeconfig-*
 *kubeconfig_*
+
+# ssl
+k8s/ssl

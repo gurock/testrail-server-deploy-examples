@@ -191,6 +191,9 @@ resource "local_file" "k8s_terraform_tfvars" {
     cluster_name = local.cluster_name,
     efs_id       = module.efs-0.id,
     region       = var.region,
+    tr_domain    = var.tr_domain,
+    email        = var.email,
+    tls          = var.tls,
     })
   filename          = "./k8s/terraform.tfvars"
   file_permission   = "0755"

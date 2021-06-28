@@ -20,6 +20,13 @@ provider "helm" {
   }
 }
 
+provider "kubectl" {
+  host                   = data.aws_eks_cluster.default.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.default.token
+  load_config_file       = false
+}
+
 resource "local_file" "kubeconfig" {
   sensitive_content = templatefile("${path.module}/kubeconfig.tpl", {
     cluster_name = var.cluster_name,
@@ -138,7 +145,7 @@ resource "helm_release" "testrail" {
   name       = "testrail"
 
   chart      = "./../../charts/testrail"
-  version    = "0.4.0"
+  version    = "0.1.0"
 
   set {
     name  = "storage.efs_enabled"
@@ -156,6 +163,22 @@ resource "helm_release" "testrail" {
     name  = "ingress.hosts.0.paths.0.path"
     value = "/"
   }
+  set {
+    name  = "tls"
+    value = var.tls
+  }
+  set {
+    name  = "ingress.tls.0.secretName"
+    value = "testrail-tls"
+  }
+  set {
+    name  = "ingress.tls.0.hosts.0"
+    value = var.tr_domain
+  }
+
+  depends_on = [
+    helm_release.nginx_ingress,
+  ]
 }
 
 resource "kubernetes_namespace" "cert-manager" {
@@ -165,6 +188,7 @@ resource "kubernetes_namespace" "cert-manager" {
 }
 
 resource "helm_release" "cert-manager" {
+  count      = var.tls == "letsencrypt" ? 1 : 0
   namespace  = "cert-manager"
   wait       = true
   timeout    = 600
@@ -179,4 +203,67 @@ resource "helm_release" "cert-manager" {
     name  = "installCRDs"
     value = true
   }
+}
+
+resource "kubectl_manifest" "issuer" {
+  count     = var.tls == "letsencrypt" ? 1 : 0
+  yaml_body = <<YAML
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+  namespace: ${kubernetes_namespace.app.metadata.0.name}
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ${var.email}
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - selector: {}
+      http01:
+        ingress:
+          class: nginx
+YAML
+}
+
+resource "kubernetes_secret" "testrail-tls" {
+  count = var.tls == "from_file" ? 1 : 0
+
+  metadata {
+    name      = "testrail-tls"
+		namespace = kubernetes_namespace.app.metadata.0.name
+  }
+
+  data = {
+    "tls.crt" = fileexists("${path.module}/ssl/server.crt") ? file("${path.module}/ssl/server.crt") : ""
+    "tls.key" = fileexists("${path.module}/ssl/server.key") ? file("${path.module}/ssl/server.key") : ""
+  }
+
+  type = "kubernetes.io/tls"
+}
+
+resource "null_resource" "metric_server_installation" {
+
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Downloading metric_server components"
+      curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.0/components.yaml -o components.yaml
+    EOT
+  }
+}
+
+data "kubectl_path_documents" "metric_server_manifests" {
+  pattern = "./components.yaml"
+  depends_on = [
+    null_resource.metric_server_installation,
+  ]
+}
+
+resource "kubectl_manifest" "metric_server" {
+  count     = length(data.kubectl_path_documents.metric_server_manifests.documents)
+  yaml_body = element(data.kubectl_path_documents.metric_server_manifests.documents, count.index)
+  depends_on = [
+    data.kubectl_path_documents.metric_server_manifests,
+  ]
 }

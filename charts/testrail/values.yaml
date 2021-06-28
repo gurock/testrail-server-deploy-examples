@@ -84,3 +84,5 @@ storage:
 
 pvc:
   volumeHandle: ""
+
+tls: "none"

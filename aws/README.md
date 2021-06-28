@@ -21,6 +21,12 @@ You will need the following environment variables to be set:
 region        = "eu-central-1"
 environment   = "dev"
 app_name      = "tr"
+tr_domain     = "tr.dev"
+email         = "user@example.com" # used in a cert-manager Let's Encrypt issuer
+tls           = "letsencrypt" # by default, use Let's Encrypt a free, automated, and open certificate authority
+# other option
+#tls           = "from_file"
+# requires ssl certificate from ./k8s/ssl/server.crt and key ./k8s/ssl/server.key
 
 #
 ## AWS EKS Cluster size
@@ -77,3 +83,14 @@ terraform init
 terraform apply --auto-approve
 ```
 
+Get loadbalancer address
+```sh
+kubectl -ntr get ingress testrail -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+```
+
+Get mysql password
+```sh
+terraform show -json | jq '.values.outputs.rds_cluster_master_password.value'
+```
+
+Go to your testrail url and install

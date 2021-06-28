@@ -1,5 +1,5 @@
 variable "region" {
-	type = string
+  type = string
 }
 
 variable "cluster_name" {
@@ -12,6 +12,14 @@ variable "app_name" {
 
 variable "tr_domain" {
   default = "tr.dev"
+}
+
+variable "email" {
+  default = "user@example.com"
+}
+
+variable "tls" {
+  default = "letsencrypt"
 }
 
 variable "efs_id" {

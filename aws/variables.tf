@@ -10,6 +10,18 @@ variable "app_name" {
   default = "tr"
 }
 
+variable "tr_domain" {
+  default = "tr.dev"
+}
+
+variable "email" {
+  default = "user@example.com"
+}
+
+variable "tls" {
+  default = "letsencrypt"
+}
+
 variable "node_instance_type" {
   default = "c5.large"
 }
