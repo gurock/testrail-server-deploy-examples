@@ -45,3 +45,5 @@ terraform.rc
 
 # ssl
 k8s/ssl
+
+k8s/components.yaml
