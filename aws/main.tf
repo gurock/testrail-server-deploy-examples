@@ -110,6 +110,7 @@ module "eks" {
       asg_min_size                  = var.node_asg_min_size
       asg_max_size                  = var.node_asg_max_size
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+      root_encrypted                = true
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"
