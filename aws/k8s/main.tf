@@ -110,33 +110,6 @@ resource "random_password" "cassandra" {
   special          = true
 }
 
-resource "helm_release" "cassandra" {
-  namespace  = kubernetes_namespace.app.metadata.0.name
-  wait       = true
-  timeout    = 600
-
-  name       = "cassandra"
-
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "cassandra"
-  version    = "7.6.1"
-
-  set {
-    name  = "replicaCount"
-    value = 2
-  }
-
-  set {
-    name  = "dbUser.user"
-    value = "admin"
-  }
-
-  set {
-    name  = "dbUser.password"
-    value = random_password.cassandra.result
-  }
-}
-
 resource "helm_release" "testrail" {
   namespace  = kubernetes_namespace.app.metadata.0.name
   wait       = true
