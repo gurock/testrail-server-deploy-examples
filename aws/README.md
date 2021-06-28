@@ -32,10 +32,25 @@ tls           = "letsencrypt" # by default, use Let's Encrypt a free, automated,
 #
 ## AWS EKS Cluster size
 #
-node_instance_type        = "c5.large"
+node_instance_type        = "c5.xlarge"
 node_asg_desired_capacity = 2
 node_asg_min_size         = 2
 node_asg_max_size         = 10
+
+#
+## Testrail resources, choose best option based on instance type (below is an example for c5.xlarge)
+# (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+#
+tr_resources = {
+	requests = {
+		cpu    = "2000m"
+		memory = "4Gi"
+	},
+	limits = {
+		cpu    = "2000m"
+		memory = "4Gi"
+	},
+}
 
 #
 ## DB settings
