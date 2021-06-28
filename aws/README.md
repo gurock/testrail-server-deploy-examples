@@ -13,8 +13,9 @@ You will need the following environment variables to be set:
 ### Prerequisite setup
 
 1. terraform (https://www.terraform.io/downloads.html)
-2. aws cli
+2. aws cli (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 3. aws-iam-authenticator (https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
+4. jq (https://stedolan.github.io/jq/download/)
 
 ### Create [terraform.tfvars](./terraform.tfvars)
 ```
@@ -83,7 +84,7 @@ terraform init
 terraform apply --auto-approve
 ```
 
-Get loadbalancer address
+Get loadbalancer address and update your DNS settings
 ```sh
 kubectl -ntr get ingress testrail -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
@@ -94,3 +95,6 @@ terraform show -json | jq '.values.outputs.rds_cluster_master_password.value'
 ```
 
 Go to your testrail url and install
+```sh
+open https://$(kubectl -ntr get ingress testrail -o jsonpath='{.spec.rules[0].host}')
+```
