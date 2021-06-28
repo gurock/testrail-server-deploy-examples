@@ -200,3 +200,13 @@ resource "local_file" "k8s_terraform_tfvars" {
   filename          = "./k8s/terraform.tfvars"
   file_permission   = "0755"
 }
+
+resource "null_resource" "metric_server_installation" {
+
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Downloading metric_server components"
+      curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.0/components.yaml -o ./k8s/components.yaml
+    EOT
+  }
+}

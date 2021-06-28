@@ -232,21 +232,9 @@ resource "kubernetes_secret" "testrail-tls" {
   type = "kubernetes.io/tls"
 }
 
-resource "null_resource" "metric_server_installation" {
-
-  provisioner "local-exec" {
-    command = <<EOT
-      echo "Downloading metric_server components"
-      curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.0/components.yaml -o components.yaml
-    EOT
-  }
-}
-
 data "kubectl_path_documents" "metric_server_manifests" {
-  pattern = "./components.yaml"
-  depends_on = [
-    null_resource.metric_server_installation,
-  ]
+  pattern = "${path.module}/components.yaml"
+  disable_template = true
 }
 
 resource "kubectl_manifest" "metric_server" {
