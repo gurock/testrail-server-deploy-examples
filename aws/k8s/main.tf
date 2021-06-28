@@ -148,25 +148,26 @@ resource "helm_release" "testrail" {
     name  = "ingress.tls.0.hosts.0"
     value = var.tr_domain
   }
-	set {
+  set {
     name  = "resources.limits.cpu"
     value = var.tr_resources.limits.cpu
   }
-	set {
+  set {
     name  = "resources.limits.memory"
     value = var.tr_resources.limits.memory
   }
-	set {
+  set {
     name  = "resources.requests.cpu"
     value = var.tr_resources.requests.cpu
   }
-	set {
+  set {
     name  = "resources.requests.memory"
     value = var.tr_resources.requests.memory
   }
 
   depends_on = [
     helm_release.nginx_ingress,
+    helm_release.aws-efs-csi-driver,
   ]
 }
 
@@ -221,7 +222,7 @@ resource "kubernetes_secret" "testrail-tls" {
 
   metadata {
     name      = "testrail-tls"
-		namespace = kubernetes_namespace.app.metadata.0.name
+    namespace = kubernetes_namespace.app.metadata.0.name
   }
 
   data = {
