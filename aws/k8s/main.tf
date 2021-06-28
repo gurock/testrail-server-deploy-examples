@@ -175,6 +175,22 @@ resource "helm_release" "testrail" {
     name  = "ingress.tls.0.hosts.0"
     value = var.tr_domain
   }
+	set {
+    name  = "resources.limits.cpu"
+    value = var.tr_resources.limits.cpu
+  }
+	set {
+    name  = "resources.limits.memory"
+    value = var.tr_resources.limits.memory
+  }
+	set {
+    name  = "resources.requests.cpu"
+    value = var.tr_resources.requests.cpu
+  }
+	set {
+    name  = "resources.requests.memory"
+    value = var.tr_resources.requests.memory
+  }
 
   depends_on = [
     helm_release.nginx_ingress,

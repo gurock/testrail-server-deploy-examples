@@ -195,6 +195,7 @@ resource "local_file" "k8s_terraform_tfvars" {
     tr_domain    = var.tr_domain,
     email        = var.email,
     tls          = var.tls,
+    tr_resources = var.tr_resources,
     })
   filename          = "./k8s/terraform.tfvars"
   file_permission   = "0755"

@@ -14,6 +14,31 @@ variable "tr_domain" {
   default = "tr.dev"
 }
 
+variable "tr_resources" {
+  description = "Testrail resources requests and limits."
+  type = object({
+    requests = object({
+      cpu    = string
+      memory = string
+    })
+    limits   = object({
+      cpu    = string
+      memory = string
+    })
+  })
+
+  default = {
+    requests   = {
+      "cpu"    = "1200m"
+      "memory" = "2048Mi"
+    },
+    limits   = {
+      "cpu"    = "1200m"
+      "memory" = "2048Mi"
+    },
+  }
+}
+
 variable "email" {
   default = "user@example.com"
 }

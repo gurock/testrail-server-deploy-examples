@@ -14,6 +14,31 @@ variable "tr_domain" {
   default = "tr.dev"
 }
 
+variable "tr_resources" {
+  description = "Testrail resources requests and limits."
+  type = object({
+    requests = object({
+      cpu    = string
+      memory = string
+    })
+    limits   = object({
+      cpu    = string
+      memory = string
+    })
+  })
+
+  default = {
+    requests   = {
+      "cpu"    = "1000m"
+      "memory" = "2048Mi"
+    },
+    limits   = {
+      "cpu"    = "1000m"
+      "memory" = "2048Mi"
+    },
+  }
+}
+
 variable "email" {
   default = "user@example.com"
 }
@@ -27,15 +52,15 @@ variable "node_instance_type" {
 }
 
 variable "node_asg_desired_capacity" {
-  default = "1"
+  default = "3"
 }
 
 variable "node_asg_min_size" {
-  default = "1"
+  default = "3"
 }
 
 variable "node_asg_max_size" {
-  default = "2"
+  default = "6"
 }
 
 variable "db_instance_type" {
