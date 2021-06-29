@@ -29,11 +29,15 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "/app/bin/init.sh && /custom-entrypoint.sh apache2-foreground"]
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
+          - name: init
+            mountPath: /app/bin
           {{- if .Values.storage.efs_enabled }}
           - name: testrail-data
             mountPath: /opt/testrail
@@ -46,11 +50,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -67,6 +71,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      - name: init
+        configMap:
+          name: testrail-init
+          defaultMode: 0755
       {{- if .Values.storage.efs_enabled }}
       - name: testrail-data
         persistentVolumeClaim:
