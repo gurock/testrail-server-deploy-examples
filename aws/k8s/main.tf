@@ -42,6 +42,18 @@ resource "kubernetes_namespace" "app" {
   }
 }
 
+module "alb_controller" {
+  source  = "./modules/aws-load-balancer-controller"
+
+  k8s_cluster_type = "eks"
+  k8s_namespace    = "kube-system"
+
+  aws_region_name  = var.region
+  k8s_cluster_name = var.cluster_name
+
+	depends_on = []
+}
+
 resource "helm_release" "nginx_ingress" {
   namespace  = kubernetes_namespace.app.metadata.0.name
   wait       = true
@@ -53,10 +65,9 @@ resource "helm_release" "nginx_ingress" {
   chart      = "ingress-nginx"
   version    = "v3.30.0"
 
-  set {
-    name  = "controller.replicaCount"
-    value = 2
-  }
+  values = [
+    file("values/ingress-nginx.yaml")
+  ]
 }
 
 resource "helm_release" "cluster-autoscaler" {
