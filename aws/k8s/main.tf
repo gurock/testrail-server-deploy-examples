@@ -51,7 +51,7 @@ module "alb_controller" {
   aws_region_name  = var.region
   k8s_cluster_name = var.cluster_name
 
-	depends_on = []
+  depends_on = []
 }
 
 resource "helm_release" "nginx_ingress" {
@@ -226,6 +226,9 @@ spec:
         ingress:
           class: nginx
 YAML
+  depends_on = [
+    helm_release.cert-manager,
+  ]
 }
 
 resource "kubernetes_secret" "testrail-tls" {
