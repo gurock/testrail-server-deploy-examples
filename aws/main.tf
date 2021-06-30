@@ -21,7 +21,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "tr-eks-${random_string.suffix.result}"
+  cluster_name = "${var.app_name}-eks-${random_string.suffix.result}"
   tags = {
     Owner       = var.app_name
     Environment = var.environment
