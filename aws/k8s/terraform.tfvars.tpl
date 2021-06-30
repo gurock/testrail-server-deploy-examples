@@ -1,4 +1,5 @@
 cluster_name = "${cluster_name}"
+app_name     = "${app_name}"
 efs_id       = "${efs_id}"
 region       = "${region}"
 tr_domain    = "${tr_domain}"

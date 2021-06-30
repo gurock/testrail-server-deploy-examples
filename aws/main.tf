@@ -191,6 +191,7 @@ data "aws_iam_policy_document" "worker_autoscaling" {
 resource "local_file" "k8s_terraform_tfvars" {
   sensitive_content = templatefile("${path.module}/k8s/terraform.tfvars.tpl", {
     cluster_name = local.cluster_name,
+    app_name     = var.app_name
     efs_id       = module.efs-0.id,
     region       = var.region,
     tr_domain    = var.tr_domain,
