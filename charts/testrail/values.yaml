@@ -81,8 +81,12 @@ affinity: {}
 
 storage:
   efs_enabled: false
+  csi_enabled: false
 
 pvc:
   volumeHandle: ""
+  network: "default"
+  resources:
+    storage: "1Ti"
 
 tls: "none"

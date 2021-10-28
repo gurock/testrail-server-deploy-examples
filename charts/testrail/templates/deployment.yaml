@@ -44,6 +44,13 @@ spec:
           - name: testrail-config
             mountPath: /var/www/testrail/config
           {{- end }}
+          {{- if .Values.storage.csi_enabled }}
+          - name: testrail-data
+            mountPath: /opt/testrail
+          - name: testrail-data
+            mountPath: /var/www/testrail/config
+            subPath: "config"
+          {{- end }}
           ports:
             - name: http
               containerPort: 80
@@ -82,4 +89,9 @@ spec:
       - name: testrail-config
         persistentVolumeClaim:
           claimName: efs-config
+      {{- end }}
+      {{- if .Values.storage.csi_enabled }}
+      - name: testrail-data
+        persistentVolumeClaim:
+          claimName: fs-pvc
       {{- end }}

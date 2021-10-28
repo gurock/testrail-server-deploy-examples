@@ -1,0 +1,9 @@
+controller:
+  replicaCount: 3
+  config:
+    enable-real-ip: "true"
+    proxy-real-ip-cidr: "192.168.0.0/16"
+    use-forwarded-headers: "true"
+  service:
+    externalTrafficPolicy: Local
+
