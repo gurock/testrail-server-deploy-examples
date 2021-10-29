@@ -28,5 +28,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: cd gcp && terraform init
+      - name: Terraform Validate
+        id: validate
+        run: cd gcp && terraform validate -no-color
 
 

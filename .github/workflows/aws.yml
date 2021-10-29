@@ -27,5 +27,9 @@ jobs:
         run: cd aws && terraform fmt -check
       - name: Terraform Init
         id: init
-        run: cd gcp && terraform init
+        run: cd aws && terraform init
+      - name: Terraform Validate
+        id: validate
+        run: cd aws && terraform validate -no-color
+
 
