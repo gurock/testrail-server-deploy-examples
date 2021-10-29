@@ -63,7 +63,7 @@ resource "helm_release" "nginx_ingress" {
 
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
-  version    = "v3.30.0"
+  version    = "v4.0.6"
 
   values = [
     file("values/ingress-nginx.yaml")
@@ -79,7 +79,7 @@ resource "helm_release" "cluster-autoscaler" {
 
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
-  version    = "9.9.2"
+  version    = "9.10.7"
 
   set {
     name  = "autoDiscovery.clusterName"
@@ -100,7 +100,7 @@ resource "helm_release" "aws-efs-csi-driver" {
 
   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
   chart      = "aws-efs-csi-driver"
-  version    = "2.1.1"
+  version    = "2.2.0"
 
   set {
     name  = "image.repository"
@@ -198,7 +198,7 @@ resource "helm_release" "cert-manager" {
 
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "v1.4.0"
+  version    = "v1.6.0"
 
   set {
     name  = "installCRDs"
