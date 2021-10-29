@@ -1,5 +1,5 @@
 data "google_compute_zones" "available" {
-	provider = google-beta
+  provider = google-beta
 
   region  = var.region
   project = var.project_id
@@ -13,9 +13,9 @@ module "gcp-network" {
 
   subnets = [
     {
-      subnet_name           = var.subnetwork
-      subnet_ip             = "10.10.0.0/16"
-      subnet_region         = var.region
+      subnet_name   = var.subnetwork
+      subnet_ip     = "10.10.0.0/16"
+      subnet_region = var.region
       #subnet_private_access = "true"
     },
     {

@@ -1,6 +1,6 @@
 variable "app_name" {
   description = "The application name"
-  default = "tr"
+  default     = "tr"
 }
 
 variable "tr_domain" {
@@ -14,18 +14,18 @@ variable "tr_resources" {
       cpu    = string
       memory = string
     })
-    limits   = object({
+    limits = object({
       cpu    = string
       memory = string
     })
   })
 
   default = {
-    requests   = {
+    requests = {
       "cpu"    = "1200m"
       "memory" = "2048Mi"
     },
-    limits   = {
+    limits = {
       "cpu"    = "1200m"
       "memory" = "2048Mi"
     },
