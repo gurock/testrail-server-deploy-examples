@@ -1,5 +1,5 @@
 locals {
-  rds_name   = "${var.app_name}-${var.environment}"
+  rds_name = "${var.app_name}-${var.environment}"
   rds_tags = {
     Owner       = var.app_name
     Environment = var.environment
@@ -31,12 +31,12 @@ module "db" {
   instance_type         = var.db_instance_type
   instance_type_replica = var.db_replica_type
 
-  vpc_id  =  module.vpc.vpc_id
-  subnets =  module.vpc.database_subnets
+  vpc_id  = module.vpc.vpc_id
+  subnets = module.vpc.database_subnets
 
-  replica_count           = 2
-  create_security_group   = false
-  vpc_security_group_ids  = [aws_security_group.db_access.id]
+  replica_count          = 2
+  create_security_group  = false
+  vpc_security_group_ids = [aws_security_group.db_access.id]
 
   storage_encrypted   = true
   apply_immediately   = true

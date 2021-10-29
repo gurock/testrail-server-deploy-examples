@@ -1,5 +1,5 @@
 locals {
-  efs_name   = "${var.app_name}-${var.environment}"
+  efs_name = "${var.app_name}-${var.environment}"
   efs_tags = {
     Owner       = var.app_name
     Environment = var.environment

@@ -21,18 +21,18 @@ variable "tr_resources" {
       cpu    = string
       memory = string
     })
-    limits   = object({
+    limits = object({
       cpu    = string
       memory = string
     })
   })
 
   default = {
-    requests   = {
+    requests = {
       "cpu"    = "1000m"
       "memory" = "2048Mi"
     },
-    limits   = {
+    limits = {
       "cpu"    = "1000m"
       "memory" = "2048Mi"
     },
