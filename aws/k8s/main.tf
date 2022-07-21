@@ -260,12 +260,6 @@ resource "kubectl_manifest" "metric_server" {
   ]
 }
 
-resource "kubernetes_namespace" "cassandra" {
-  metadata {
-    name = "cassandra"
-  }
-}
-
 resource "helm_release" "cassandra" {
   name       = "cassandra"
   repository = "https://charts.bitnami.com/bitnami"
@@ -281,8 +275,8 @@ resource "helm_release" "cassandra" {
     value = "admin"
   }
 
-  set {
+  set_sensitive {
     name  = "dbUser.password"
-    value = "cassandrapass" #TODO: choose a default or change the way to provide this password
+    value = random_password.cassandra.result
   }
 }
