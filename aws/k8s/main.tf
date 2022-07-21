@@ -259,3 +259,30 @@ resource "kubectl_manifest" "metric_server" {
     data.kubectl_path_documents.metric_server_manifests,
   ]
 }
+
+resource "kubernetes_namespace" "cassandra" {
+  metadata {
+    name = "cassandra"
+  }
+}
+
+resource "helm_release" "cassandra" {
+  name       = "cassandra"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "cassandra"
+
+  set {
+    name  = "metrics.enabled"
+    value = true
+  }
+
+  set {
+    name  = "dbUser.user"
+    value = "admin"
+  }
+
+  set {
+    name  = "dbUser.password"
+    value = "cassandrapass" #TODO: choose a default or change the way to provide this password
+  }
+}
