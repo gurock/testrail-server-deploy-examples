@@ -1,6 +1,9 @@
-## Testrail Server
+# testrail-server-deploy-examples
 
-![AWS](https://github.com/gurock/testrail-server-deploy-examples/actions/workflows/aws.yml/badge.svg)
-![GCP](https://github.com/gurock/testrail-server-deploy-examples/actions/workflows/gcp.yml/badge.svg)
+> **This repository has moved to a new public location.**
 
-This examples demostrates the way to deploy High Availability Testrail on cloud like AWS, GCP, AZURE etc. and bare metals
+The source code for this project is now maintained at:
+
+## [https://github.com/sembi-oss/testrail-server-deploy-examples](https://github.com/sembi-oss/testrail-server-deploy-examples)
+
+Please update your bookmarks, forks, and any references to point to the new address.
